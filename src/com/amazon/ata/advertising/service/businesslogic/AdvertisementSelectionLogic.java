@@ -4,8 +4,11 @@ import com.amazon.ata.advertising.service.dao.ReadableDao;
 import com.amazon.ata.advertising.service.model.AdvertisementContent;
 import com.amazon.ata.advertising.service.model.EmptyGeneratedAdvertisement;
 import com.amazon.ata.advertising.service.model.GeneratedAdvertisement;
+import com.amazon.ata.advertising.service.model.RequestContext;
+import com.amazon.ata.advertising.service.targeting.TargetingEvaluator;
 import com.amazon.ata.advertising.service.targeting.TargetingGroup;
 
+import com.amazon.ata.advertising.service.targeting.predicate.TargetingPredicateResult;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -57,14 +60,27 @@ public class AdvertisementSelectionLogic {
      */
     public GeneratedAdvertisement selectAdvertisement(String customerId, String marketplaceId) {
         GeneratedAdvertisement generatedAdvertisement = new EmptyGeneratedAdvertisement();
+        SortedMap<TargetingGroup, AdvertisementContent> sortedMap =
+                new TreeMap<>(Comparator.comparingDouble(TargetingGroup::getClickThroughRate).reversed());
         if (StringUtils.isEmpty(marketplaceId)) {
             LOG.warn("MarketplaceId cannot be null or empty. Returning empty ad.");
         } else {
+            RequestContext requestContext = new RequestContext(customerId, marketplaceId);
+            TargetingEvaluator targetingEvaluator = new TargetingEvaluator(requestContext);
             final List<AdvertisementContent> contents = contentDao.get(marketplaceId);
 
             if (CollectionUtils.isNotEmpty(contents)) {
                 AdvertisementContent randomAdvertisementContent = contents.get(random.nextInt(contents.size()));
-                generatedAdvertisement = new GeneratedAdvertisement(randomAdvertisementContent);
+                generatedAdvertisement = new GeneratedAdvertisement(contentDao.get(marketplaceId).stream()
+                    .map(advertisementContent -> targetingGroupDao.get(advertisementContent.getContentId())
+                            .stream()
+                            .sorted(sortedMap.comparator())
+//                            .sorted(Comparator.comparingDouble(TargetingGroup::getClickThroughRate))
+                            .map(targetingEvaluator::evaluate)
+                            .anyMatch(TargetingPredicateResult::isTrue) ? advertisementContent : null)
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                   .get());
             }
 
         }

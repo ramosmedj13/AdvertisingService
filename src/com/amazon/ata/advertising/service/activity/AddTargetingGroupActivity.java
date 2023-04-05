@@ -14,7 +14,11 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
+
+import static org.apache.commons.collections4.ListUtils.emptyIfNull;
 
 /**
  * Adds a new targeting group to an existing piece of advertising content based on the contentId specified. If a list of
@@ -24,7 +28,7 @@ import javax.inject.Inject;
  * clickThroughRate can be learned.
  */
 public class AddTargetingGroupActivity {
-    public static final boolean IMPLEMENTED_STREAMS = false;
+    public static final boolean IMPLEMENTED_STREAMS = true;
     private static final Logger LOG = LogManager.getLogger(AddTargetingGroupActivity.class);
 
     private final TargetingGroupDao targetingGroupDao;
@@ -46,21 +50,31 @@ public class AddTargetingGroupActivity {
     public AddTargetingGroupResponse addTargetingGroup(AddTargetingGroupRequest request) {
         String contentId = request.getContentId();
         List<com.amazon.ata.advertising.service.model.TargetingPredicate> requestedTargetingPredicates =
-            request.getTargetingPredicates();
+                request.getTargetingPredicates();
         LOG.info(String.format("Adding targeting predicates [%s] to content with id: %s.",
-            requestedTargetingPredicates,
-            contentId));
+                requestedTargetingPredicates,
+                contentId));
 
-        List<TargetingPredicate> targetingPredicates = new ArrayList<>();
-        if (requestedTargetingPredicates != null) {
-            for (com.amazon.ata.advertising.service.model.TargetingPredicate targetingPredicate :
-                requestedTargetingPredicates) {
-                TargetingPredicate predicate = TargetingPredicateTranslator.fromCoral(targetingPredicate);
-                targetingPredicates.add(predicate);
-            }
-        }
+//        List<TargetingPredicate> targetingPredicates = new ArrayList<>();
 
-        TargetingGroup targetingGroup = targetingGroupDao.create(contentId, targetingPredicates);
+//        if (requestedTargetingPredicates != null) {
+//            for (com.amazon.ata.advertising.service.model.TargetingPredicate targetingPredicate :
+//                requestedTargetingPredicates) {
+//                TargetingPredicate predicate = TargetingPredicateTranslator.fromCoral(targetingPredicate);
+//                targetingPredicates.add(predicate);
+//            }
+//        }
+
+//        TargetingGroup targetingGroup = targetingGroupDao.create(contentId, targetingPredicates);
+
+
+
+        TargetingGroup targetingGroup = targetingGroupDao.create(contentId, emptyIfNull(requestedTargetingPredicates)
+                .stream()
+                .filter(Objects::nonNull)
+                .map(TargetingPredicateTranslator::fromCoral)
+                .collect(Collectors.toList()));
+
 
         return AddTargetingGroupResponse.builder()
                 .withTargetingGroup(TargetingGroupTranslator.toCoral(targetingGroup))
