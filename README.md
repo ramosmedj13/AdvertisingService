@@ -1,51 +1,29 @@
-#  Unit 7 Project: ATA Advertising Service
+# AdvertisingService
 
-## Preliminaries: The More Things Change
+This is the repository for the advanced Java project for the BloomTech Backend course. The project is designed to help students build their skills in Java programming and gain experience working on a real-world project.
 
-### Ambiguity, Complexity, and Scope
+### Overview
 
-Ambiguity will be increasing from previous projects. Tasks instructions will contain fewer details, as we expect you to 
-reference documentation and deep dive into the code yourself to understand how things work. Even if there isn't a 
-specific task for it, you're of course welcome to create any diagrams or other notes as a reference for yourself or 
-others!
+AdvertisingService is a Java-based web application that provides a platform for managing advertising campaigns. It allows users to create and manage campaigns, add and track clicks and impressions, and generate reports to analyze campaign performance. The application uses Spring Boot, Spring Data JPA, and MySQL to manage and store campaign data, while the front-end interface is built using Thymeleaf and Bootstrap.
 
-There will be some increasing complexity as we work with ExecutorServices for the first time.
+The project is organized into several packages, each responsible for different functionalities such as model, controller, service, and repository. It also includes integration tests to ensure the application is functioning correctly. The project is actively maintained and provides a comprehensive solution for managing advertising campaigns in a simple and user-friendly manner.
 
-You'll have your fellow participants in the same situation as you, so remember to collaborate: rely on each other for 
-assistance, and share your own knowledge.
+### Technologies and Frameworks
 
-## Unit 7 Project Progress and Tracking
+The project uses the following technologies and frameworks:
 
-### Doneness checklist
+- Java
+- Spring Boot
+- Maven
+- MySQL
+- Swagger
+- Spring
+- Spring Data JPA
+- Spring MVC
+- Spring Security
 
-You're done with the project when: 
+### Contributing
 
-* You have successfully passed all tests in CodeGrade
-
-### cloudformation commands
-
-You'll want to run the following commands to setup your DynamoDB tables for this project (note that you will need to wait for the first command's stack to finish building before running the next commands):
-
-```
-aws cloudformation create-stack --region us-west-2 --stack-name advertisingservice-createtables --template-body file://configurations/cloudFormation/ddb_tables.template.yml --capabilities CAPABILITY_IAM
-aws dynamodb batch-write-item --request-items file://configurations/cloudFormation/content_table.json
-aws dynamodb batch-write-item --request-items file://configurations/cloudFormation/targeting_group_table.json
-aws dynamodb batch-write-item --request-items file://configurations/cloudFormation/targeting_group_table2.json
-```
-
-## The Problem: ATA Advertising
-
-ATA's AdvertisingService serves advertisements for ATA. These advertisements show up on the retail website and use 
-targeting to present different ATA advertisements to each individual. The targeting tries to take advantage of what 
-Amazon knows about you to show you the particular ad that is most likely to appeal to you.
-
-An overview of the service is covered in the [design document](DESIGN_DOCUMENT.md). We encourage you to read that now
-before continuing below.
-
-## Project Mastery Tasks
-
-### [Mastery Task 1: Filter out the noise](tasks/project-mastery-tasks/MasteryTask01.md)
-### [Mastery Task 2: Concurrent Tasks](tasks/project-mastery-tasks/MasteryTask02.md)
-### [Mastery Task 3: Ads don't grow on trees (or do they?)](tasks/project-mastery-tasks/MasteryTask03.md)
+This game was created as a school project for Bloomtech Institute and is not currently accepting contributions.
 
 
