@@ -24,6 +24,6 @@ The project uses the following technologies and frameworks:
 
 ### Contributing
 
-This game was created as a school project for Bloomtech Institute and is not currently accepting contributions.
+This was created as a school project for Bloomtech Institute and is not currently accepting contributions.
 
 
